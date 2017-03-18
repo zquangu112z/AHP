@@ -19,8 +19,8 @@
 
         //list criteria
         var criterias;
-
-
+        //criterias length
+        var n;
 
         function autoGenerate(divName, tableAreaId) {
             container = document.getElementById(divName);
@@ -34,9 +34,10 @@
                 log.innerHTML = log.innerHTML + criterias[i].value;
             }
 
-            var n = criterias.length;
+            n = criterias.length;
 
             table = document.createElement('table');
+            table.setAttribute("id" , "tb_compare");
             //            table.classList.add("table");
             //            table.className = "table";TODO: style
 
@@ -71,6 +72,7 @@
                     var radio1 = document.createElement('input');
                     radio1.setAttribute("type", "radio");
                     radio1.setAttribute("name", "C[" + count + "]");
+                    radio1.setAttribute("value","1" );
                     radio1.checked = true;
                     tr.cells[1].appendChild(radio1);
                     tr.cells[1].appendChild(document.createTextNode(criterias[i].value)); //i
@@ -79,6 +81,7 @@
                     var radio2 = document.createElement('input');
                     radio2.setAttribute("type", "radio");
                     radio2.setAttribute("name", "C[" + count + "]");
+                    radio2.setAttribute("value",2 );
                     radio2.checked = false;
                     tr.cells[2].appendChild(radio2);
                     tr.cells[2].appendChild(document.createTextNode(criterias[j].value));
@@ -88,6 +91,7 @@
                         var radio = document.createElement('input');
                         radio.setAttribute("type", "radio");
                         radio.setAttribute("name", "Intense[" + count + "]");
+                        radio.setAttribute("value", k * 2 + 1 + "");
                         if (k == 0) radio.checked = true;
                         tr.cells[3].appendChild(radio);
                         tr.cells[3].appendChild(document.createTextNode(k * 2 + 1));
@@ -108,15 +112,103 @@
             
             var intro_title = document.createElement("h2");
             intro_title.innerHTML = "Pairwise Comparison";
+            
             var intro = document.createElement("p");
-            intro.innerHTML="Which criterion with respect to AHP priorities is more important, and how much more on a scale 1 to 9?";
+            intro.innerHTML="Which criterion with respect to AHP priorities is more important, and how much more on a Natsty scale?";
+            
+            var outtro =  document.createElement("p");
+            outtro.innerHTML = "When completed, click <mark>Calculate</mark> to have the result."
+            outtro.classList.add("text-info");
+            
+            var btn_calculate =  document.createElement("button");
+            btn_calculate.appendChild(document.createTextNode("Calculate"));
+            btn_calculate.setAttribute("class" , "btn btn-success");
+            btn_calculate.setAttribute("onclick" , "calculatePriority()");
+            
             tableArea = document.getElementById(tableAreaId);  
             tableArea.appendChild(intro_title);
             tableArea.appendChild(intro);
-            tableArea.appendChild(table);
+            tableArea.appendChild(table);   
+            tableArea.appendChild(document.createElement("br"));
+            tableArea.appendChild(outtro);
+            tableArea.appendChild(btn_calculate);
         }
 
+        function matrix( rows, cols, defaultValue){
 
+            var arr = [];
+
+            // Creates all lines:
+            for(var i=0; i < rows; i++){
+
+                // Creates an empty line
+                arr.push([]);
+
+                // Adds cols to the empty line:
+                arr[i].push( new Array(cols));
+
+                for(var j=0; j < cols; j++){
+                // Initializes:
+                arr[i][j] = defaultValue;
+                }
+            }
+
+            return arr;
+        }
+        function calculatePriority(){
+            var data = matrix(n,n,1);
+            
+            var table = document.getElementById("tb_compare");
+            var list_row = table.getElementsByTagName("tr");
+            
+            //du lieu 1 hang
+            var compare = [list_row.length - 1];
+            var counter = 0;
+            
+           
+            
+            
+            
+            
+            
+            for(var i = 1; i < list_row.length; i++){
+                var list_radio_button = list_row[i].lastChild.getElementsByTagName("Input");
+                for(var j = 0 ; j < list_radio_button.length; j++){
+                    if(list_radio_button[j].checked == true){
+                        //kiem tra do quan trong
+                        var important = list_row[i].childNodes[1].getElementsByTagName("Input")[0].checked;
+                        if(important){   //????                     
+                            compare[i-1] = list_radio_button[j].value;
+                        }else{
+                            compare[i-1] = 1.000 / list_radio_button[j].value;
+                        }
+                        
+                        log.innerHTML+=compare[i-1] + "--"+ important +"--";
+                    }
+                }                
+            }
+            
+            
+            for (var a = 0; a < n - 1; a++) {
+                for (var b = a + 1; b < n; b++) {                    
+                    var x = compare[counter++];
+                    data[a][b] = x;
+                    data[b][a] = 1/data[a][b];
+                }
+            }
+            
+            
+            //xu li mang data tai day!!!TODO
+            
+            
+            log.innerHTML = "";
+            for (var i = 0; i < n ; i++) {
+                for (var j = 0; j < n; j++) {                    
+                    log.innerHTML+= data[i][j] + ",";
+                }
+                log.innerHTML += "|";
+            }
+        }
 
         function addInputObject(divName) {
             container = document.getElementById(divName);
@@ -138,9 +230,7 @@
             }
         }
         
-        function calculatePriority(){
-            
-        }
+        
         
 
         function addInput(divName) {
@@ -241,12 +331,12 @@
         <button type="button" class="btn btn-success" onClick="autoGenerate('criteria_init', 'table_compare')">Generate</button>
 
         <br><br>
-        <div class="row" id="table_compare">
-            <div></div>
+        <div class="row">
+            <div class="col-sm-12" id="table_compare">
+            </div>
+            
         </div>
         
-        <br>
-        <button type="button" class="btn btn-success" onClick="calculatePriority()">Calculate</button>
         
 
         <br><br><br><br><p id="log">Error Log: </p>
