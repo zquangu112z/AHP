@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>AHP Priorities</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    
+    <script>
+        var countCritical = 2;
+        var limit = 10;
+
+        var countObject = 2;
+        var limitObject = 10;
+
+        //list criteria
+        var criterias;
+
+
+
+        function autoGenerate(divName, tableAreaId) {
+            container = document.getElementById(divName);
+            log = document.getElementById("log");
+
+            criterias = container.getElementsByTagName("input");
+
+            //log
+            log.innerHTML += criterias.length;
+            for (var i = 0; i < criterias.length; i++) {
+                log.innerHTML = log.innerHTML + criterias[i].value;
+            }
+
+            var n = criterias.length;
+
+            table = document.createElement('table');
+            //            table.classList.add("table");
+            //            table.className = "table";TODO: style
+
+            //header
+            var tr_header = document.createElement('tr');
+
+            tr_header.appendChild(document.createElement('th'));
+            tr_header.appendChild(document.createElement('th'));
+
+            tr_header.cells[0].appendChild(document.createTextNode('A - Importance - or B?'))
+            tr_header.cells[0].setAttribute("colspan", "3");
+            tr_header.cells[1].appendChild(document.createTextNode('How much more?'));
+            tr_header.cells[1].setAttribute("colspan", "5");
+
+            table.appendChild(tr_header);
+
+            var count = 0;
+            //generate table
+            for (var i = 0; i < n - 1; i++) {
+                for (var j = i + 1; j < n; j++) {
+                    var tr = document.createElement('tr');
+
+                    tr.appendChild(document.createElement('td')); //No
+                    tr.appendChild(document.createElement('td')); //Obj 1
+                    tr.appendChild(document.createElement('td')); //Obj 2                    
+                    tr.appendChild(document.createElement('td')); //compare
+
+                    //so thu tu
+                    tr.cells[0].appendChild(document.createTextNode(++count));
+
+                    //Obj 1
+                    var radio1 = document.createElement('input');
+                    radio1.setAttribute("type", "radio");
+                    radio1.setAttribute("name", "C[" + count + "]");
+                    radio1.checked = true;
+                    tr.cells[1].appendChild(radio1);
+                    tr.cells[1].appendChild(document.createTextNode(criterias[i].value)); //i
+
+                    //Obj 2
+                    var radio2 = document.createElement('input');
+                    radio2.setAttribute("type", "radio");
+                    radio2.setAttribute("name", "C[" + count + "]");
+                    radio2.checked = false;
+                    tr.cells[2].appendChild(radio2);
+                    tr.cells[2].appendChild(document.createTextNode(criterias[j].value));
+
+                    //compare
+                    for (var k = 0; k < 5; k++) {
+                        var radio = document.createElement('input');
+                        radio.setAttribute("type", "radio");
+                        radio.setAttribute("name", "Intense[" + count + "]");
+                        if (k == 0) radio.checked = true;
+                        tr.cells[3].appendChild(radio);
+                        tr.cells[3].appendChild(document.createTextNode(k * 2 + 1));
+                    }
+
+
+
+                    //add
+                    table.appendChild(tr);
+                    //log
+                    log.innerHTML = log.innerHTML + criterias[i].value + "," + criterias[j].value; //i
+                    log.innerHTML = log.innerHTML + "  xxx  ";
+
+
+
+                }
+            }
+            
+            var intro_title = document.createElement("h2");
+            intro_title.innerHTML = "Pairwise Comparison";
+            var intro = document.createElement("p");
+            intro.innerHTML="Which criterion with respect to AHP priorities is more important, and how much more on a scale 1 to 9?";
+            tableArea = document.getElementById(tableAreaId);  
+            tableArea.appendChild(intro_title);
+            tableArea.appendChild(intro);
+            tableArea.appendChild(table);
+        }
+
+
+
+        function addInputObject(divName) {
+            container = document.getElementById(divName);
+            if (countObject == limitObject) {
+                alert("You have reached the limit of adding " + countObject + " objects");
+            } else {
+                // Append a node with a random text
+                container.appendChild(document.createTextNode("Object " + (countObject + 1) + " "));
+                // Create an <input> element, set its type and name attributes
+                var newdiv = document.createElement("input");
+                newdiv.type = "text";
+                countObject++;
+                newdiv.name = "c" + countObject;
+
+                container.appendChild(newdiv);
+                container.appendChild(document.createElement("br"));
+                container.appendChild(document.createElement("br"));
+
+            }
+        }
+        
+        function calculatePriority(){
+            
+        }
+        
+
+        function addInput(divName) {
+            //    alert('sdjfd');
+            container = document.getElementById(divName);
+            if (countCritical == limit) {
+                alert("You have reached the limit of adding " + countCritical + " inputs");
+            } else {
+                // Append a node with a random text
+                container.appendChild(document.createTextNode("Critical " + (countCritical + 1) + " "));
+                // Create an <input> element, set its type and name attributes
+                var newdiv = document.createElement("input");
+                newdiv.type = "text";
+                countCritical++;
+                newdiv.name = "c" + countCritical;
+                newdiv.setAttribute("onkeydown", "addInputOnEnter('criteria_init')");
+
+                container.appendChild(newdiv);
+
+                container.lastChild.focus();
+                container.appendChild(document.createElement("br"));
+                container.appendChild(document.createElement("br"));
+
+            }
+        }
+
+        function addInputOnEnter(divName) {
+            //alert(element.name);
+            if (event.keyCode == 13) {
+                addInput(divName);
+                //                container = document.getElementById(divName);
+                //                if (countCritical == limit) {
+                //                    alert("You have reached the limit of adding " + countCritical + " inputs");
+                //                } else {
+                //
+                //
+                //                    // Append a node with a random text
+                //                    container.appendChild(document.createTextNode("Critical " + (countCritical + 1) + " "));
+                //                    // Create an <input> element, set its type and name attributes
+                //                    var newdiv = document.createElement("input");
+                //                    newdiv.type = "text";
+                //                    countCritical++;
+                //                    newdiv.name = "c" + countCritical;
+                //                    newdiv.setAttribute("onkeydown", "addInputOnEnter('criteria_init')");
+                //
+                //                    container.appendChild(newdiv);
+                //                    container.lastChild.focus(); 
+                //                    container.appendChild(document.createElement("br"));
+                //                    container.appendChild(document.createElement("br"));                 
+                //                   
+                //
+                //                }
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- INTRO and GET NEW N -->
+        <h1>AHP priority calculator</h1>
+
+        <div class="row">
+            <!-- CRITERIAL - INIT -->
+            <div class="col-sm-6">
+                <h2>Criteria: input names 2->10</h2>
+                <p class="text-info">(Use <kbd>Enter</kbd> to generate new field)</p>
+                <div id="criteria_init">
+                    Critical 1
+                    <input type="text" name="c1">
+                    <br><br> Critical 2
+                    <input type="text" name="c2" onkeydown="addInputOnEnter('criteria_init')">
+                    <br><br>
+                </div>
+<!--                <button type="button" class="btn btn-success" onClick="addInput('criteria_init')">More Criteria</button>-->
+            </div>
+
+            <!-- OBJECT - INIT -->
+            <div class="col-sm-6">
+                <h2>Object: input names 2->10</h2>
+                <p class="text-info">(Use <kbd>Enter</kbd> to generate new field)</p>
+                <div id="object_init">
+                    Object 1
+                    <input type="text" name="c1">
+                    <br><br> Object 2
+                    <input type="text" name="c2">
+                    <br>
+                    <br>
+                </div>
+<!--                <button type="button" class="btn btn-success" onClick="addInputObject('object_init')">More Object</button>-->
+            </div>
+        </div>
+
+        
+        <p class="text-info">When completed, click <mark>Generate</mark> to show the compare table.</p>        
+        <button type="button" class="btn btn-success" onClick="autoGenerate('criteria_init', 'table_compare')">Generate</button>
+
+        <br><br>
+        <div class="row" id="table_compare">
+            <div></div>
+        </div>
+        
+        <br>
+        <button type="button" class="btn btn-success" onClick="calculatePriority()">Calculate</button>
+        
+
+        <br><br><br><br><p id="log">Error Log: </p>
+    </div>
+
+</body>
+
+</html>

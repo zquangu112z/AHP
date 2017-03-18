@@ -1,0 +1,133 @@
+<html lang="en-US">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="description" content="AHP Priorities">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AHP Priorities</title>
+<!--
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Oxygen:700" rel="stylesheet" type="text/css">
+-->
+<!--    <link rel="stylesheet" href="http://bpmsg.com/includes/css/bpmsg.css" type="text/css">-->
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+    <script>
+        var countCritical = 2;
+        var limit = 10;
+        
+        var countObject = 2;
+        var limitObject = 10;
+
+        function addInput(divName) {
+            //    alert('sdjfd');
+            container = document.getElementById(divName);
+            if (countCritical == limit) {
+                alert("You have reached the limit of adding " + countCritical + " inputs");
+            } else {
+                // Append a node with a random text
+                container.appendChild(document.createTextNode("Critical " + (countCritical + 1) + " "));
+                // Create an <input> element, set its type and name attributes
+                var newdiv = document.createElement("input");
+                newdiv.type = "text";
+                countCritical++;
+                newdiv.name = "c" + countCritical;
+
+                container.appendChild(newdiv);
+                container.appendChild(document.createElement("br"));
+                container.appendChild(document.createElement("br"));
+
+            }
+        }
+        
+        function addInputObject(divName) {
+            container = document.getElementById(divName);
+            if (countObject == limitObject) {
+                alert("You have reached the limit of adding " + countObject + " objects");
+            } else {
+                // Append a node with a random text
+                container.appendChild(document.createTextNode("Object " + (countObject + 1) + " "));
+                // Create an <input> element, set its type and name attributes
+                var newdiv = document.createElement("input");
+                newdiv.type = "text";
+                countObject++;
+                newdiv.name = "c" + countObject;
+
+                container.appendChild(newdiv);
+                container.appendChild(document.createElement("br"));
+                container.appendChild(document.createElement("br"));
+
+            }
+        }
+
+
+        function addInputOnEnter(divName) {
+            //alert(element.name);
+            if (event.keyCode == 13 ) {//&& element.name== "c"+counter
+                //    alert('sdjfd');
+                // remove the event listener for the old element
+                //event.target.removeEventListener('keydown', tab);
+                
+                container = document.getElementById(divName);
+                if (counter == limit) {
+                    alert("You have reached the limit of adding " + counter + " inputs");
+                } else {
+
+
+                    // Append a node with a random text
+                    container.appendChild(document.createTextNode("Critical " + (counter + 1) + " "));
+                    // Create an <input> element, set its type and name attributes
+                    var newdiv = document.createElement("input");
+                    newdiv.type = "text";
+                    counter++;
+                    newdiv.name = "c" + counter;
+                    newdiv.onkeydown = "addInputOnEnter('dynamiccriteria_initInput')";
+//                    newdiv.setAttribute("onkeydown",addInputOnEnter(divName));
+
+                    container.appendChild(newdiv);
+                    container.appendChild(document.createElement("br"));
+                    container.appendChild(document.createElement("br"));
+
+                }
+            }
+        }
+        
+    </script>
+</head>
+
+<body>
+    <!-- INTRO and GET NEW N -->
+    <h1>AHP priority calculator</h1>
+    <h2>Criteria: input names 2->20</h2>
+
+    <div id="criteria_init">
+        Critical 1
+        <input type="text" name="c1">
+        <br><br> 
+        Critical 2
+        <input type="text" name="c2">
+<!--        <input type="text" name="c2" onkeydown="addInputOnEnter('criteria_init')">-->
+        <br><br>
+    </div>
+    <input type="button" value="Add Criteria" onClick="addInput('criteria_init')">
+    
+    <br><br> 
+    
+    <div id="object_init">
+        Object 1
+        <input type="text" name="c1">
+        <br><br> 
+        Object 2
+        <input type="text" name="c2">
+        <br>
+        <br>
+    </div>
+    <input type="button" value="Add Object" onClick="addInputObject('object_init')">
+
+
+</body>
+
+</html>
