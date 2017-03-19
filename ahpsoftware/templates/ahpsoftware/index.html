@@ -9,7 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
-    
+
     <script>
         var countCritical = 2;
         var limit = 10;
@@ -37,7 +37,7 @@
             n = criterias.length;
 
             table = document.createElement('table');
-            table.setAttribute("id" , "tb_compare");
+            table.setAttribute("id", "tb_compare");
             //            table.classList.add("table");
             //            table.className = "table";TODO: style
 
@@ -72,7 +72,7 @@
                     var radio1 = document.createElement('input');
                     radio1.setAttribute("type", "radio");
                     radio1.setAttribute("name", "C[" + count + "]");
-                    radio1.setAttribute("value","1" );
+                    radio1.setAttribute("value", "1");
                     radio1.checked = true;
                     tr.cells[1].appendChild(radio1);
                     tr.cells[1].appendChild(document.createTextNode(criterias[i].value)); //i
@@ -81,7 +81,7 @@
                     var radio2 = document.createElement('input');
                     radio2.setAttribute("type", "radio");
                     radio2.setAttribute("name", "C[" + count + "]");
-                    radio2.setAttribute("value",2 );
+                    radio2.setAttribute("value", 2);
                     radio2.checked = false;
                     tr.cells[2].appendChild(radio2);
                     tr.cells[2].appendChild(document.createTextNode(criterias[j].value));
@@ -109,105 +109,234 @@
 
                 }
             }
-            
+
             var intro_title = document.createElement("h2");
             intro_title.innerHTML = "Pairwise Comparison";
-            
+
             var intro = document.createElement("p");
-            intro.innerHTML="Which criterion with respect to AHP priorities is more important, and how much more on a Natsty scale?";
-            
-            var outtro =  document.createElement("p");
+            intro.innerHTML = "Which criterion with respect to AHP priorities is more important, and how much more on a Natsty scale?";
+
+            var outtro = document.createElement("p");
             outtro.innerHTML = "When completed, click <mark>Calculate</mark> to have the result."
             outtro.classList.add("text-info");
-            
-            var btn_calculate =  document.createElement("button");
+
+            var btn_calculate = document.createElement("button");
             btn_calculate.appendChild(document.createTextNode("Calculate"));
-            btn_calculate.setAttribute("class" , "btn btn-success");
-            btn_calculate.setAttribute("onclick" , "calculatePriority()");
-            
-            tableArea = document.getElementById(tableAreaId);  
+            btn_calculate.setAttribute("class", "btn btn-success");
+            btn_calculate.setAttribute("onclick", "calculatePriority()");
+
+            tableArea = document.getElementById(tableAreaId);
             tableArea.appendChild(intro_title);
             tableArea.appendChild(intro);
-            tableArea.appendChild(table);   
+            tableArea.appendChild(table);
             tableArea.appendChild(document.createElement("br"));
             tableArea.appendChild(outtro);
             tableArea.appendChild(btn_calculate);
         }
 
-        function matrix( rows, cols, defaultValue){
+        function matrix(rows, cols, defaultValue) {
 
             var arr = [];
 
             // Creates all lines:
-            for(var i=0; i < rows; i++){
+            for (var i = 0; i < rows; i++) {
 
                 // Creates an empty line
                 arr.push([]);
 
                 // Adds cols to the empty line:
-                arr[i].push( new Array(cols));
+                arr[i].push(new Array(cols));
 
-                for(var j=0; j < cols; j++){
-                // Initializes:
-                arr[i][j] = defaultValue;
+                for (var j = 0; j < cols; j++) {
+                    // Initializes:
+                    arr[i][j] = defaultValue;
                 }
             }
 
             return arr;
         }
-        function calculatePriority(){
-            var data = matrix(n,n,1);
-            
+
+        function calculatePriority() {
+            var data = matrix(n, n, 1);
+
             var table = document.getElementById("tb_compare");
             var list_row = table.getElementsByTagName("tr");
-            
+
             //du lieu 1 hang
             var compare = [list_row.length - 1];
             var counter = 0;
             
-           
-            
-            
-            
-            
-            
-            for(var i = 1; i < list_row.length; i++){
+            for (var i = 1; i < list_row.length; i++) {
                 var list_radio_button = list_row[i].lastChild.getElementsByTagName("Input");
-                for(var j = 0 ; j < list_radio_button.length; j++){
-                    if(list_radio_button[j].checked == true){
+                for (var j = 0; j < list_radio_button.length; j++) {
+                    if (list_radio_button[j].checked == true) {
                         //kiem tra do quan trong
                         var important = list_row[i].childNodes[1].getElementsByTagName("Input")[0].checked;
-                        if(important){   //????                     
-                            compare[i-1] = list_radio_button[j].value;
-                        }else{
-                            compare[i-1] = 1.000 / list_radio_button[j].value;
+                        if (important) { //????                     
+                            compare[i - 1] = list_radio_button[j].value;
+                        } else {
+                            compare[i - 1] = 1.000 / list_radio_button[j].value;
                         }
-                        
-                        log.innerHTML+=compare[i-1] + "--"+ important +"--";
+
+                        log.innerHTML += compare[i - 1] + "--" + important + "--";
                     }
-                }                
-            }
-            
-            
-            for (var a = 0; a < n - 1; a++) {
-                for (var b = a + 1; b < n; b++) {                    
-                    var x = compare[counter++];
-                    data[a][b] = x;
-                    data[b][a] = 1/data[a][b];
                 }
             }
-            
-            
-            //xu li mang data tai day!!!TODO
-            
-            
+
+
+            for (var a = 0; a < n - 1; a++) {
+                for (var b = a + 1; b < n; b++) {
+                    var x = compare[counter++];
+                    data[a][b] = x;
+                    data[b][a] = 1 / data[a][b];
+                }
+            }
+
+            //mang data thu duoc
             log.innerHTML = "";
-            for (var i = 0; i < n ; i++) {
-                for (var j = 0; j < n; j++) {                    
-                    log.innerHTML+= data[i][j] + ",";
+            for (var i = 0; i < n; i++) {
+                for (var j = 0; j < n; j++) {
+                    log.innerHTML += data[i][j] + ",";
                 }
                 log.innerHTML += "|";
             }
+
+            //xu li mang data tai day!!!TODO
+            //tinh vector rieng
+            var eigen_value = eigenvalue(data);
+            //log
+            log.innerHTML += "eigen_value: "
+            for (var i = 0; i < n; i++) {
+                log.innerHTML += eigen_value[0][i] + ",";
+            }
+            //hien thi ket qua
+            var intro_title = document.createElement("h2");
+            intro_title.innerHTML = "Priorities";
+
+            var intro = document.createElement("p");
+            intro.innerHTML = "These are the resulting weights for the criteria based on your pairwise comparisons";
+            
+            table_result = document.createElement('table');
+            //ranking 
+            var sorted = eigen_value[0].slice().sort(function(a,b){return b-a})
+            var ranks = eigen_value[0].slice().map(function(v){ return sorted.indexOf(v)+1 });
+
+            //header
+            var tr_header = document.createElement('tr');
+
+            tr_header.appendChild(document.createElement('th'));
+            tr_header.appendChild(document.createElement('th'));
+            tr_header.appendChild(document.createElement('th'));
+
+            tr_header.cells[0].appendChild(document.createTextNode('Category'))
+            tr_header.cells[0].setAttribute("colspan", "2");
+            tr_header.cells[1].appendChild(document.createTextNode('Priority'));
+            tr_header.cells[2].appendChild(document.createTextNode('Rank'));
+            
+
+            table_result.appendChild(tr_header);
+            //body           
+            
+            log.innerHTML += "criterial---"
+            for (var i = 0; i < criterias.length; i++) {
+                log.innerHTML += criterias[i] + ","  ;
+                var tr = document.createElement('tr');
+
+                    tr.appendChild(document.createElement('td')); //No
+                    tr.appendChild(document.createElement('td')); //category
+                    tr.appendChild(document.createElement('td')); //priority                  
+                    tr.appendChild(document.createElement('td')); //rank
+
+                    //so thu tu
+                    tr.cells[0].appendChild(document.createTextNode(i+1));
+
+                    //category
+                    tr.cells[1].appendChild(document.createTextNode(criterias[i].value));
+                
+                    //priority
+                    tr.cells[2].appendChild(document.createTextNode(eigen_value[0][i]));
+                    //rank
+                    tr.cells[3].appendChild(document.createTextNode(ranks[i]));//TODO
+                
+                    table_result.appendChild(tr);                
+            }
+            
+            
+
+            tableArea_result = document.getElementById("table_priority");
+            tableArea_result.appendChild(intro_title);
+            tableArea_result.appendChild(intro);
+            tableArea_result.appendChild(table_result);
+            
+        
+        }
+        
+        
+            
+            
+            
+
+
+        
+        
+        function eigenvalue(data){
+            var old_eigen_value = matrix(1, n, 0); //usage:old_eigen_value[0][i]
+            while (true) {
+                data = matrix_dot(data, data);
+                var eigen_value = matrix(1, n, 0); //usage: eigen_value[0][i]
+
+                for (var i = 0; i < n; i++) {
+                    for (var j = 0; j < n; j++) {
+                        eigen_value[0][i] += data[i][j];
+                    }
+                }
+                var sum = 0;
+
+                for (var i = 0; i < n; i++) {
+                    sum += eigen_value[0][i];
+                }
+
+                var cnt = false;
+
+                for (var i = 0; i < n; i++) {
+                    eigen_value[0][i] = eigen_value[0][i] / sum;
+
+                    if ((eigen_value[0][i] - old_eigen_value[0][i]) > 0.01) {
+                        cnt = true;
+                    }
+                    old_eigen_value[0][i] = eigen_value[0][i];
+                }
+                //debugger;
+                if (cnt == false) {
+                    //in ra ket qua TODO
+//                    log.innerHTML += "eigen_value: "
+//                    for (var i = 0; i < n; i++) {
+//                        log.innerHTML += eigen_value[0][i] + ",";
+//                    }
+//
+//                    break;
+                    return eigen_value;
+                }
+            }
+            
+        }
+
+        function matrix_dot(a, b) {
+            var aNumRows = a.length,
+                aNumCols = a[0].length,
+                bNumRows = b.length,
+                bNumCols = b[0].length,
+                m = new Array(aNumRows); // initialize array of rows
+            for (var r = 0; r < aNumRows; ++r) {
+                m[r] = new Array(bNumCols); // initialize the current row
+                for (var c = 0; c < bNumCols; ++c) {
+                    m[r][c] = 0; // initialize the current cell
+                    for (var i = 0; i < aNumCols; ++i) {
+                        m[r][c] += a[r][i] * b[i][c];
+                    }
+                }
+            }
+            return m;
         }
 
         function addInputObject(divName) {
@@ -229,9 +358,9 @@
 
             }
         }
-        
-        
-        
+
+
+
 
         function addInput(divName) {
             //    alert('sdjfd');
@@ -261,28 +390,6 @@
             //alert(element.name);
             if (event.keyCode == 13) {
                 addInput(divName);
-                //                container = document.getElementById(divName);
-                //                if (countCritical == limit) {
-                //                    alert("You have reached the limit of adding " + countCritical + " inputs");
-                //                } else {
-                //
-                //
-                //                    // Append a node with a random text
-                //                    container.appendChild(document.createTextNode("Critical " + (countCritical + 1) + " "));
-                //                    // Create an <input> element, set its type and name attributes
-                //                    var newdiv = document.createElement("input");
-                //                    newdiv.type = "text";
-                //                    countCritical++;
-                //                    newdiv.name = "c" + countCritical;
-                //                    newdiv.setAttribute("onkeydown", "addInputOnEnter('criteria_init')");
-                //
-                //                    container.appendChild(newdiv);
-                //                    container.lastChild.focus(); 
-                //                    container.appendChild(document.createElement("br"));
-                //                    container.appendChild(document.createElement("br"));                 
-                //                   
-                //
-                //                }
             }
         }
     </script>
@@ -307,7 +414,7 @@
                     <input type="text" name="c2" onkeydown="addInputOnEnter('criteria_init')">
                     <br><br>
                 </div>
-<!--                <button type="button" class="btn btn-success" onClick="addInput('criteria_init')">More Criteria</button>-->
+                <!--                <button type="button" class="btn btn-success" onClick="addInput('criteria_init')">More Criteria</button>-->
             </div>
 
             <!-- OBJECT - INIT -->
@@ -322,24 +429,31 @@
                     <br>
                     <br>
                 </div>
-<!--                <button type="button" class="btn btn-success" onClick="addInputObject('object_init')">More Object</button>-->
+                <!--                <button type="button" class="btn btn-success" onClick="addInputObject('object_init')">More Object</button>-->
             </div>
         </div>
 
-        
-        <p class="text-info">When completed, click <mark>Generate</mark> to show the compare table.</p>        
+
+        <p class="text-info">When completed, click <mark>Generate</mark> to show the compare table.</p>
         <button type="button" class="btn btn-success" onClick="autoGenerate('criteria_init', 'table_compare')">Generate</button>
 
         <br><br>
         <div class="row">
             <div class="col-sm-12" id="table_compare">
             </div>
-            
+
         </div>
         
-        
+        <div class="row">
+            <div class="col-sm-6" id="table_priority">
+            </div>
 
-        <br><br><br><br><p id="log">Error Log: </p>
+        </div>
+
+
+
+        <br><br><br><br>
+        <p id="log" class="text-danger">Error Log: </p>
     </div>
 
 </body>
